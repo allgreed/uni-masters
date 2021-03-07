@@ -1,0 +1,15 @@
+digraph G {
+  " " -> plansza;
+  plansza -> "najlepszy ruch?";
+  "najlepszy ruch?" -> "najlepszy ruch" [ label="owszem" ];
+  "najlepszy ruch?" -> "blunder?" [ label="skądże" ];
+  "blunder?" -> "blunder" [ label="w istocie" ];
+  "blunder?" -> "stylowy ruch" [ label="wykluczone" ];
+  "najlepszy ruch" -> "  ";
+  "blunder" -> "  ";
+  "stylowy ruch" -> "  ";
+  "blunder?" [shape=diamond];
+  "najlepszy ruch?" [shape=diamond];
+  " " [shape=circle];
+  "  " [shape=doublecircle];
+}

@@ -1,0 +1,36 @@
+import akka.actor._
+
+case class Wstaw(n: Int)
+case class Usuń(n: Int)
+case class Pusto(n: Int)
+
+class Węzeł extends Actor {
+
+  def receive: Receive = {
+    ???
+  }
+
+  def korzeń(wartość: Int): Receive = {
+    ???
+  }
+
+  def zPotomkami(wartość: Int, potomkowie: Set[ActorRef]): Receive = {
+    ???
+  }
+
+}
+
+class Nadzorca extends Actor {
+  def receive: Receive = {
+    ???
+  }
+
+  def stan(znane: Set[Int]): Receive = {
+    ???
+  }
+}
+
+object Main extends App {
+  val system = ActorSystem("system")
+  ???
+}

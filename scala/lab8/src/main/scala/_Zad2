@@ -1,0 +1,32 @@
+import akka.actor._
+
+case class Wstaw(n: Int)
+case class Znajdź(n: Int)
+
+class Węzeł extends Actor {
+
+  def liść(wartość: Int): Receive = {
+    ???
+  }
+
+  def zLewymPoddrzewem(lewe: ActorRef, wartość: Int): Receive = {
+    ???
+  }
+
+  def zPrawymPoddrzewem(wartość: Int, prawe: ActorRef): Receive = {
+    ???
+  }
+
+  def zPoddrzewami(lewe: ActorRef, wartość: Int, prawe: ActorRef): Receive = {
+    ???
+  }
+
+  def receive: Receive = {
+    ???
+  }
+}
+
+object Main extends App {
+  val system = ActorSystem("system")
+
+}

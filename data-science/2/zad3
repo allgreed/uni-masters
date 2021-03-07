@@ -1,0 +1,8 @@
+Problem 2: 3-SAT
+
+Struktura chromosomu: ciąg binarny o długości 5 (tyle ile zmiennych). i-ty bit odpowiada wartości zminnej x_i, tj. jeśli 3-ci bit ma wartość 1 to zmienna x_3 ma wartość logiczną PRAWDA. Analogicznie odwrotnie dla bitu 0 i wartości FAŁSZ.
+Które chormosomy są dobre? Chromosom jest tym lepszy, im więcej klauzul jest spełnionych przy podstawieniu wskazywanych wartości.
+Działanie funkcji Fitness: Funkcja dostaje chromosm chr. Oblicza ilość spełnionych klauzul przy podstawieniu wartości zmiennych zgodnie z chr.
+Max. zakres funkcji Fitness:
+    min: 0 (żadna klauzula nie jest spełniona)
+    max: 7 [ilość wszystkich klauzul w formule]

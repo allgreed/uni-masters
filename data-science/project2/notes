@@ -1,0 +1,236 @@
+Prezka:
+- problem statement
+
+- cannot get a consistend IO model
+    - valid moves change per turn
+    - would probably have very low accuracy with datasets of this size
+    - it's known to predict non-legal moves [source - some article about chess]
+
+- theory of how the program would work (piece of paper)
+
+- demonstration is impossible (it's about master playing a master)
+
+- scoring it correctly is nearly impossible
+    - http://www.tools4dev.org/resources/how-to-choose-a-sample-size/
+    - so a Turing test with 100 GM games would be ~meaningfull
+
+- get some Kasparov games
+- set up Stockfish <- chess engine
+- convert them to something I can work with (python chess)
+
+- negative model -> mostly play like the Stockfish engine + apply differences
+    - get a single game
+    - compute per game accuracy
+    - it's 58 - 66% for Kasparov, however I'm not computing multiplePV
+    - it's ~70% if I discard suboptimals opening moves (they're though to be book moves) 
+
+    - testing PV hipothesis
+        - suboptimal move 11 2rqkbnr/1p3pp1/p2pb2p/4p3/4P3/2NQN3/PPP2PPP/R1B1K2R b KQk - 5 11 g8f6 f8e7
+        ```
+        info depth 18 seldepth 25 multipv 1 score cp 0 nodes 1986784 nps 1068738 hashfull 734 tbhits 0 time 1859 pv d8c7 e1g1 g8f6 f1d1 f8e7 a2a4 e8g8 c1d2 f8d8 d2e1 c7c5 h2h3 d8e8 a1c1 c5b6 e1d2 b6c5
+        info depth 18 seldepth 22 multipv 2 score cp 0 nodes 1986784 nps 1068738 hashfull 734 tbhits 0 time 1859 pv *g8f6* e1g1 d8c7 f1d1 f8e7 a2a4 e8g8 c1d2 f8d8 d2e1 c7c5 h2h3 d8e8 a1c1 c5b6 e1d2 b6c6 d2e1
+        info depth 18 seldepth 27 multipv 3 score cp 0 nodes 1986784 nps 1068738 hashfull 734 tbhits 0 time 1859 pv f8e7 e1g1 g8f6 a2a4 e8g8 f1d1 d8b6 h2h3 b6c5 a4a5 f8d8 a1a4 c5c6 a4a1
+        bestmove d8c7 ponder e1g1
+        ```
+
+        - since they all score the same - 0 => therefore it's a best move as well
+        - however Stockfish is not super deterministic
+        - introduced cp_tolerance factor to consider mutlipaths (so that moves that score cp_tolerance less are still considered best moves)
+        - had to hack the stockfish Python driver a bit :D
+
+        - try 3 centipawns tolerance - 73.3% accuracy with multipaths - no need to discard opening moves
+
+        - try 8 centipawns tolerance - same results
+
+        - trying 20cp tolerance - 76.6%
+
+        - going for a full pawn (100cp), just for kicks - 80%
+
+        - setting the tolerance to 5 centipawns
+
+        - ran 3 times on the same settings - results are fairly stable, though there is an undeterministing component to it (possibly the hashtable inside Stockfish) - out of 3 runs the same 6 moves were identified as suboptimal on all 3 runs and 3 more on 2 runs. Only 1 identification was idiosyncratic to the run. 
+        - ran with depth 25, instead of 18 (should take 15 minutes on my craptop) - 73.3% - no significant gain, though more possible positions were found.
+
+    - for the given game (Anand v. Kasparov, Saint Louis Rapid 2017) it ~holds 
+
+    - for a sample of 23 games from 2017/2018 the hypothesis kind of hold  - 62.35% +- 10.23% => it can be said that grandamsters half the time play like the engine
+        - other moves are excetllent, rarely good.
+
+    - https://support.chess.com/article/1135-what-is-accuracy-in-analysis-how-is-it-measured
+    chess.com mesaures accurancy differently
+
+- get all Kaspraov games
+    - fortunately I didn't have to scrape anything <3
+
+- extract moves and positions
+    - via script, but had to manually fix and encoding issue - 79.976 datapoints!
+    - 60x data size, but it's managable
+
+- check weather they're the best (on remote machine on DigitalOcean)
+
+- do some preliminary ML
+    - just serialize the positions, don't give a shit about castling possibilities, move number or en passants
+    - run tons of classifiers
+    - example data
+    ```
+    move_number;fen;move;is_best
+    0;rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1;c7c5;1
+    ```
+
+    - getting detect results on k-NN, other classifiers same => ~67% accuracy with 1/40 of the dataset
+- more preliminaly ML
+    - prepare the big dataset
+    - see if result changes => if it doesn't that mean it's not working
+    - the result doesn't change
+    - compute general accuracy (best moves / total moves) - it's around 67%
+    - so... I've got a fancy RNG essentially :D 
+
+- real ML
+    - revert to small dataset
+    - note: heh, I've lost the info who's pieces are which... xD
+
+    - add a metric 
+        - avg_diff => the difference between dataset average positive response and model avarage positive response, combined with accuracy gives... real accuracy? o.0
+
+    - so the benchmark would be answering always true or answering true with P(0.682)
+        - here I though I was onto something, but made a mistake
+            ```c_avg = (tp + fp) / sum(c.ravel())``` vs ```c_avg = tp + fp / sum(c.ravel())```
+
+    - IMG: ml0-plt.png
+
+    - moar data doesn't really help (+3% overall accuracy on tree, same on Bayes and the k-NNs take a loooooong time to compute :C
+
+    - return to the data and account for who's pieces are which, so that PLAYER always has positive numbers!
+        - what a mess :C - had to match the annotated games with computed results
+        - if this was a paying gig I'd rerun the whole thing just for the peace of mind
+        - lesson for the future: you can always discard data, but enriching data is cumbersome
+
+        - welp... that doesn't really help on small dataset :C
+        - nor with the big dataset ;d
+
+    - also: I was accidentally encoding pawn as -1, after fixing that the results are *exactly* the same => that's how much it's worth ;)
+
+    - do NN
+        - so... I've proven my calculations xD
+        - the net is always answering "1"
+            ```
+            acc: 0.7083333333333334
+            distribution: 1.0
+            avg_diff accuracy: 0.682
+            total 0.4830833333333334
+            ```
+
+        - did some awfull stuff
+            ```
+            lst = []
+            for i in output:
+                zeros, ones = i
+                lst.append((0, ones.item() * 2))
+
+            t = torch.tensor(lst)
+            # print(t)
+            # print(output + t)
+            output = output + t
+            ```
+        - that resulted in an absolute mess
+        ```
+        acc: 0.4025
+        distribution: 0.1875
+        avg_diff accuracy: 0.5055
+        total 0.20346375
+        ```
+
+    >
+
+    - after consultations with Piotr Lewandowski and Dawid Gliwka it occured to me that I'd need at least standardized batches (so that "is_best=True" isn't overrepresented)
+    acc: 0.6483333333333333
+    distribution: 0.6966666666666667
+    avg_diff accuracy: 0.9853333333333334
+    total 0.6388244444444444
+
+
+    not very stable though, accuracy varies distincly between reruns
+
+    Full DS:
+    acc: 0.522569082649106
+    distribution: 0.36231400825240695
+    avg_diff accuracy: 0.6867113274481658
+    total 0.3588541084293378
+
+    Learning rate 1e-2:
+    acc: 0.32371941816363103
+    distribution: 0.0
+    avg_diff accuracy: 0.32439731919575876
+    total 0.10501371142389272
+
+    Learning rate 1e-3, batch size 1000:
+    acc: 0.5122327345475763
+    distribution: 0.3457258367023715
+    avg_diff accuracy: 0.6701231558981302
+    total 0.34325901662935104
+
+    Learning rate 1e-5, batch size 1000:
+    acc: 0.5693744008669195
+    distribution: 0.5051473346392698
+    avg_diff accuracy: 0.8295446538350285
+    total 0.47232149026967546
+    
+    - so the problem is choosing 0 too often now :C
+
+    - BS=1000 makes the training go insanely faster on smaller dataset!
+    and sometimes it works!
+
+    - Ok, training with 1000 Epochs yields a consistent, very good result:
+    acc: 0.7071428571428572
+    distribution: 0.5357142857142857
+    avg_diff accuracy: 0.8537142857142856
+    total 0.6036979591836734
+    fp 230 (16.43%), fp 180 (12.86%)
+    ----
+    acc: 0.565
+    distribution: 0.6033333333333334
+    avg_diff accuracy: 0.9213333333333333
+    total 0.5205533333333333
+    fp 106 (17.67%), fp 155 (25.83%)
+
+    - conclustion: benchmark can be consistently beaten!
+
+    - Lets try huge dataset :D
+        acc: 0.5761570476751872
+        distribution: 0.298144079452691
+        avg_diff accuracy: 0.6225413986484498
+        total 0.3586816143008726
+        fp 6347 (11.34%), fp 17381 (31.05%)
+        ----
+        acc: 0.5091068228233234
+        distribution: 0.327928979285625
+        avg_diff accuracy: 0.6523262984813838
+        total 0.33210376926395624
+        fp 1710 (7.13%), fp 10068 (41.96%)
+
+    - so... there's an invalid bias toward is_best=False
+    - no idea how to fix it for now ;)
+
+    - conclusion: it's likely not impossible :D
+=====
+Do początku:
+- also: what is GM style
+- chess have quircks :D - en passant + Pam-Krabe
+- the hippo opening and no-op moves => via Gotham chess "how to spot a cheater"
+
+theory:
+- and move number, castling and en passants! (fen provides that kind of data)
+
+for the style component:
+- idea 1 - try to find the most simillar position
+    - this will likely work like shit
+
+- idea 2 - make a move rater 
+    - tune the engine recommedation so that the thing actually played is there
+    - try to narrow down the paths
+    - train for that dataset
+
+- that doesn't cover strategy, etc. :C
+    
+- ideas for transfer learning? o.0 - https://en.wikipedia.org/wiki/Transfer_learning
+    - tables transpositions => X-player move picker - Y-player move picker, where X dataset is large and Y dataset is small 
