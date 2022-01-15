@@ -1,0 +1,54 @@
+General GPU:
+
+- given the following:
+  (15) Multiprocessors, (192) CUDA Cores/MP:     2880 CUDA Cores
+  Maximum number of threads per multiprocessor:  2048
+  Maximum number of threads per block:           1024
+  ^<- additional residency limit
+
+  => does that mean that I can run in parallel 15 blocks, each having 192 threads (and everything else will wait)?
+        - talk about the speedup when reducing the threads per block to 192
+  => what's with the max threads per multiprocessor - is it about the resident threads? yes
+
+- given that I have 170 registers per thread effectively (65536 / 192 / 2, where 2 is residency overhead) => should I make my kernels as large as possible to avoid kernel call overhead?
+    - reuse the same data? if yes: deeper kernels!
+    - easiest to achieve and test
+    - should I care about instruction cache? not really
+
+- just to confirm: running different grids (via different stream) simultainiously is possible? yes
+
+- on what level does coalescing memory access happen?
+    - warp level or block level?
+        warp-level first
+    - how does that correlate to 128 bytes L1 lines?
+        bits vs bytes
+    - it's a bus, so only 1 block / warp can access memory at 1 cycle, right?
+        yes
+
+- even if I have sequential data using 2D mallocs / memcpy can help with allignment, right?
+    no <- it's for programmer; not worth it
+
+- what's the approperaite model for cuda core -> simply processor [no piplining, no bypassing, etc.] or something more fancy?
+    - I heard there is something like scoreboard stall...
+    - they don't say a lot about it (seperate control and ALU, superscalar)
+
+- is looking into the assembly sensible for our assignment level or likely an overkill? [I know the answer is "it depends" ;)] not expected
+
+- theoretical speedup
+    - determine computations
+    - determine memory transfer [bandwith]
+        - negative and postive edge operation - so x2
+    - check which one will dominate
+    - realistic assumptions
+
+    - "any calculation is by deffinition an estimate"
+
+    - what about INT64 ops?
+        - datasheets + docs maybe
+        - write benchmark ?
+
+General questions [non GPU]:
+- Homomorphic encryption
+    - it is between theory and practice
+    - extremely expensive compared to computing in the clear -> 1000x more
+    - but otherwise works

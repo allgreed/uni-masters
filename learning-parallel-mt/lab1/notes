@@ -1,0 +1,41 @@
+Answered questions:
+- erf expected error? very small
+- what is an arithmetic operation? Depends on the underlaying HW
+- are hyperthreads considered real cores? well, it's complicated, but with compute-bound is not really
+- is passing a return_value pointer to a heap object considered ok as a return mechanism for threads?
+    - pointer / pass a pointer
+- what's the deal with t > ht / c being a tiny bit faster? o.0 || is there ever a situation that having more threads than cores is a good idea in compute-bound jobs?
+    - can the increased speed be justified by my scheduling hypothesis? o.0
+        - competing for resources
+        - theoretical limit => cannot break laws of physics; cannot go faster than hardware, so if I have 4 cores I cannot have more than 4x speedup (unless for example hyperthreading)
+- do I have to use Eclipse for assignments?
+    - Insight Eclipse Edition
+    - if there are problems we might talk
+- is implementing parallel version via preprocessor macros ok or really bad style?
+    - not a bad thing
+    - code may be harder to read
+    - tooling support
+- example of a peer-coordination system? Aside from realiability -> any profits?
+    - peer is less peer than I thought
+    - fluid dynamics, exchanging results -> markov chains
+- https://physics.stackexchange.com/questions/34766/how-does-power-consumption-vary-with-the-processor-frequency-in-a-typical-comput
+    - you've mentioned that relation between power and frequency is quadratic?
+        - it is (because ARM exist), however it's not a direct consequence of physics than can be derived form an equation
+        - it's complex to answer why
+    - it's a note: my processor has TurboBoost technology -> it may be activated more, when I schedule more computing threads!
+        - cores have independent clocks
+        - if the cooling is not enough it's actually slowing down
+    - how to get X for GPU?
+        - wiki, nvidia, several manufacturerers -> go for microarchitecture datasheet -> find chip!
+
+Unanswered questions:
+- is there a way to determine thread-safety rather than going line by line?
+- do you recommend and quality resources regarding implicit parallelism? I can use google, looking for something like Tannenbaum for Netowrking
+    - textbooks, computer architecture classes 
+
+Questions:
+
+Notes:
+- I though random to be a blocking IO operation, turns out it could be completely arithmetical and done without a context switch o.0
+- What is a computation => determining the limit
+- Let user specify a single seed + compute other seeds <= so that the experiment is repeatable

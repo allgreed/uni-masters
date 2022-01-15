@@ -1,0 +1,7 @@
+# compiled programme
+*.out
+*.s
+
+# submissions
+*.tar.gz
+jbutil.h

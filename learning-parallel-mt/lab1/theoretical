@@ -1,0 +1,14 @@
+1)
+    a) 8 x 32bit float op / cycle, 3.33 GHz, 4 cores = 8 * 3.33 * 10^9 * 4 = 6.56 * 10^11 = 106.56 GFLOPS
+    - https://gadgetversus.com/processor/intel-core-i5-760-specs/ <- say ~80 GFLOPS, so I'm content with the metric
+So it's:
+    - https://optimisationcpugpu-hpc.blogspot.com/2012/10/how-to-calculate-flops-of-gpu.html :: cores from techpowerup.com * shader clock * mul_units + mul_add_units * 2
+x = (MAD or MUL) + 2 * FMA = 2 the all have fused mul-add
+    b) 384 * 0.902 * 10^9 * 2 = 692.736 GFLOPS
+    c) 2880 * 0.980 * 10^9 * 2 =  5644.8 GFLOPS
+
+2)
+    a) out of order -> execution model where instructions are executed based on data avaiblity, rather than the in the order they are located in a program. Example: almost all modern x86_64 processors use this
+    b) superscalar -> a CPU has multiple execution units (like ALUs) and can shcedule more than one instruction per cycle
+    c) speculative execution -> in general it's a optimization technique which does work before it's actually needed. It could be either: eager execution -> evaluating both sides of the branch before the condition is known [and then discarding the wrong results based on the condition]. That's used with vector programming if the inner loop contains a branch. Or predictive execution, aka: branch prediction -> pipelining CPU predicts the branch taken and schedules instruction for the pipeline accordingly
+    d) loop unrolling is an optimization technique. It linearizes the loop, so a "for 3 times: instruction", becomes "instruction; instruction; instruction". The speed gains are achieved because the later form doesn't require any jump and condition checks.

@@ -1,0 +1,30 @@
+- is the 196 used for something?
+    - I told about it!
+
+General questions [non GPU]:
+- is there a link between implicit paralelism and explicit paralelism (beside out of model -> like noisy neioghbours generating heat)?
+    - (I think) processor pepole know their job so the execution *will* act as if it was non-paralelized in-order execution 
+        - or it's fixed up by the compiler people!
+        - on the fly decisions + validitiy of parallelism
+        - VLIW => kind of explicit parallelism o.0 - not programmer, just the compiler
+        - some aspects of GPU programming is implicit => warp scheduling
+    - caches can affect speed (and their rw patterns don't have the above guarantees, I mean they ensure correctness, but not speed)
+        - shared memory on the GPU is essentially is *controlled* cache
+        - but: https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37077.pdf <- page 6 E,i) nopinizer
+    - comment: OMG noop is such an usefull instruction
+    - waaaait! the microarchitectures most oftenly aren't even public. I know that GCC can optimize for some of them (mostly based on extensions afaik).
+        - there are some tools +++
+            - compilers
+            - specific libraries -> Intel libraries for numeric routines, example
+   - the techniques are fairly simillar (for explicit and implicit parallelism)
+
+Personal questions:
+    - sha512.hpp:36
+    - sha512.cu:140
+    - sha512.cu:151 -> would it be in a good style to template it by d parameter and do a static assert?
+    - Ask about Eclipse project
+        - it's a hard requiremenet :c
+
+Personal comments:
+    - 9:00 am was/is really hard for me, especially online
+    - the recordings + annotations are insanely great

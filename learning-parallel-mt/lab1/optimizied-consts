@@ -1,0 +1,47 @@
+# vim: set syntax=asm:
+# mu = 0, sigma = 1 => should be optimized out
+.LVL2:
+	.loc 2 11 1 view .LVU7
+	sub	rsp, 8
+	.cfi_def_cfa_offset 16
+	.loc 2 12 72 view .LVU8
+	mulsd	xmm0, QWORD PTR .LC0[rip]
+	.loc 2 12 54 view .LVU9
+	xorpd	xmm0, XMMWORD PTR .LC1[rip]
+	call	exp@PLT
+.LVL3:
+	.loc 2 12 92 view .LVU10
+	mulsd	xmm0, QWORD PTR .LC2[rip]
+	.loc 2 13 1 view .LVU11
+	add	rsp, 8
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+# ---
+# mu = 5, sigma = 2 => should *NOT* be optimized out
+	.loc 2 11 1 is_stmt 1 view -0
+	.cfi_startproc
+	.loc 2 12 5 view .LVU5
+	.loc 2 11 1 is_stmt 0 view .LVU6
+	sub	rsp, 8
+	.cfi_def_cfa_offset 16
+	.loc 2 12 60 view .LVU7
+	subsd	xmm0, QWORD PTR .LC0[rip]
+.LVL2:
+	.loc 2 12 60 view .LVU8
+	mulsd	xmm0, xmm0
+	.loc 2 12 72 view .LVU9
+	mulsd	xmm0, QWORD PTR .LC1[rip]
+	.loc 2 12 76 view .LVU10
+	mulsd	xmm0, QWORD PTR .LC2[rip]
+	.loc 2 12 54 view .LVU11
+	xorpd	xmm0, XMMWORD PTR .LC3[rip]
+	call	exp@PLT
+.LVL3:
+	.loc 2 12 92 view .LVU12
+	mulsd	xmm0, QWORD PTR .LC4[rip]
+	.loc 2 13 1 view .LVU13
+	add	rsp, 8
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc

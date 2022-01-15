@@ -1,0 +1,57 @@
+1a) done
+1b) done, ~ 1e-5, so I guess it's correct
+
+2a) given c cores; split the N into c parts (with the reminder going to the last core), compute M' for each core and then add it alltogether and plug into the result formula
+2b) I think so - all I do is arithmetic computations, and the heap access is isolated
+2c) done!
+
+3a) Yup, for multi it's 1.48s, which is ~50% faster
+Expectations - around threads times faster minus the coordination overhead, which should be small (see the chart and estimate)
+My local machine: t=1 => 3.02s
+t=c=2, ht=4 => 1.48s
+Virtual AMD CPU 4 cores, t=1 => 2.88512s
+Virtual AMD CPU 4 cores, t=2 => 1.44197s
+Virtual AMD CPU 4 cores, t=4 => 0.866988s
+3b)
+It does
+3c)
+My local machine: t=ht, c=2, ht=4 => 1.22s
+t=8, c=2, ht=4 => 1.17s
+t=16, c=2, ht=4 => between 1.15s and 1.30s
+t=128, c=2, ht=4 => between 1.11s and 1.30s
+Virtual AMD CPU 4 cores, 4 hyperthreads, t=8 => 0.818158s
+Virtual AMD CPU 4 cores, 4 hyperthreads, t=16 => 0.776188s
+
+So... empirically there is, but I think it's about scheduling => if there are more threads there's a higher probability that they'd be scheduled a bit faster.
+But for compute-bound it shouldn't matter / should be even slower because of the additional scheduling, guess it doesn't matter here. Wait, but doesn't scheduling work on process basis? Or maybe the hyperthread does some data fetching? On the other hand there isn't much data to fetch...
+- https://stackoverflow.com/a/15601235 <= it does per-thread scheduling 
+
+Hypothesis: it's about cache'ing <- nope, the random seed is different each time
+
+Potentially t=ht would make sense so that reading from random state memory is optimized...
+
+4)
+assumptions:
+- computing the final result is irrelevant, as it's always constant
+- pow(x, 2) is 1 operation
+- sqrt counts as 1 operations as the call is inline in the asm
+- exp counts as ~15 operations
+    - https://stackoverflow.com/a/49960065
+- not counting loop counters, etc.
+- thread coordination is *not* an arithemtic operation (yet I've got no idea how much penalty does that incurr)
+
+Ops[f(x)] = 23
+Ops[rand()] = 24
+Given N = 10^8
+Ops = N * (Ops[f(x)] + 2 + 2 * Ops[rand()]) = N * 73 = 7.3 * 10^9
+
+4a)
+Using Intel® Core™ i5-3380M Processor, 3.6 Ghz frequency, 2 cores
+So: single thread would be:
+7.3 / 2.9 = 2.51s
+7.3 / 3.6 = 2.02s
+2 cores:
+7.3 / 2.9 / 2 = 1.25s
+7.3 / 3.6 / 2 = 1.01s
+4b)
+It's very close, within 20% for single thread and 18% for two cores (assuming no TurboBoost)
