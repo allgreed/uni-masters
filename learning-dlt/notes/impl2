@@ -1,0 +1,24 @@
+Storage, only storing events / diffs / bits,
+    because the state is mutable (balances can change), but the events / bits / transaction cannot and the immutability solves a wide range of problems
+
+10:36 -> who should be "transactionFrom"? -> just use some random numbers
+
+
+- for the future => maybe just give people protobufs? xD
+    - that was by design
+
+- is every message broadcasted?
+    yes
+
+- bootstrap paradox?
+    - nope 
+- also: how do I know that the node has received all sync messages?
+    - just count them? xD
+    - distinguishable messages?
+    So... the sync is non-blocking, but has a wait
+
+- how to reasonably code this? globals everywhere? :C not really
+- ok => adding to the ledger, dropping => nok
+- state machine <- not really needed
+
+questions:
