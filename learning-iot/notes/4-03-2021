@@ -1,0 +1,20 @@
+notes:
+- 1:12:00 => why would we want JIT?
+    - code size
+        - isn't this better addressed as a proper compression?
+    - higher level features
+        - is this really such a good idea?
+    - not really that usefull
+- the lecture around ~30:00 mentions seonsor readings / radio transmitions being more energetically draining than computation
+    - I know it's a general statement, but wondering if there is some quantitative reading I can dabble into
+    - asking for Tanenbaum equivalent about this
+- rule of thumb 1 bit of transmission => 1k bits of computation
+- Neuralink -> Personal Area Networks
+- some similarities to big data => because the links and processors are scaled down proportionally
+
+links:
+http://www.jpier.org/PIERB/pierb12/12.08122303.pdf
+https://ieeexplore.ieee.org/abstract/document/5558039
+https://www.researchgate.net/profile/Joshua-Ellul/publication/291044876_The_BSNOS_platform_A_body_sensor_networks_targeted_operating_system_and_toolset/links/5b3a7d250f7e9b0df5e81f93/The-BSNOS-platform-A-body-sensor-networks-targeted-operating-system-and-toolset.pdf
+https://ecc153fc-a-3b850097-s-sites.googlegroups.com/a/ewsn.org/ewsn/file-repository/ewsn2017/084_095_reijers.pdf?attachauth=ANoY7cp5N9Wd3HO7Dznixd_zJ4QPgZX-O4NBtPaSHBghcEawgsO6jTuVLtBqJN3Unwklq1kJS94vyeXBzgQV3CGLn4Wb7OwcMQJM94_vGinOr9dqL_RFe9B65hci76jgeptFYbJa4EZz_V0yLsvALs1pmsQp-Z166WqN3_4BqzW5iafFw7Pi4gJGocJGYQYjwuRsEVCpOuj4bXbionhEcfuZ0Xcph1cKle0Alx0e5I0jm5EXX5MREEg%3D&attredirects=1
+https://dl.acm.org/doi/abs/10.1145/3341170

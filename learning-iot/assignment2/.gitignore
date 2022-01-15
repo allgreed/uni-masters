@@ -1,0 +1,15 @@
+# external lib
+haarcascade_frontalface_default.xml
+
+# precompiled
+__pycache__
+
+# artifacts
+build
+
+# pictures - with varying degree of copyright, etc.
+reference
+testset
+
+# submissions
+*.tar.gz
